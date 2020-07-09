@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.lcl.mapper.LogMapper">
+    <resultMap id="logMap" type="Log">
+        <id property="id" column="id"/>
+        <result property="operate" column="operate"/>
+        <result property="operateTime" column="operateTime"/>
+        <association property="user" javaType="User">
+            <id column="user_id" property="userId" jdbcType="INTEGER" />
+            <result column="user_name" property="userName" jdbcType="VARCHAR" />
+            <result column="user_pass" property="userPass" jdbcType="VARCHAR" />
+            <result column="user_nickname" property="userNickname" jdbcType="VARCHAR" />
+            <result column="user_email" property="userEmail" jdbcType="VARCHAR" />
+            <result column="user_url" property="userUrl" jdbcType="VARCHAR" />
+            <result column="user_avatar" property="userAvatar" jdbcType="VARCHAR" />
+            <result column="user_last_login_ip" property="userLastLoginIp" jdbcType="VARCHAR" />
+            <result column="user_register_time" property="userRegisterTime" jdbcType="TIMESTAMP" />
+            <result column="user_last_login_time" property="userLastLoginTime" jdbcType="TIMESTAMP" />
+            <result column="user_status" property="userStatus" jdbcType="INTEGER" />
+        </association>
+
+
+    </resultMap>
+
+    <select id="findAll" resultMap="logMap">
+        select * from log_table log,user u
+        where log.userId = u.user_id
+        order by log.id DESC
+    </select>
+
+
+    <select id="findByUserId" parameterType="Integer" resultMap="logMap">
+        select * from log_table log,user u
+        where log.userId = u.user_id
+        and log.id = #{id}
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from log_table
+    </select>
+
+    <insert id="insert" parameterType="Log" useGeneratedKeys="true" keyProperty="id">
+        insert into log_table (operate,operateTime,userId)
+        values (#{operate},#{operateTime},#{user.userId})
+    </insert>
+
+    <delete id="delete" parameterType="int">
+        delete from log_table
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteAll">
+        delete from log_table
+    </delete>
+</mapper>
